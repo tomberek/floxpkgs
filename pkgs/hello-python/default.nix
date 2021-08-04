@@ -4,7 +4,6 @@
 python3Packages.buildPythonApplication rec {
   project = "hello-python";
 
-
   # Programs and libraries used only at build-time.
   nativeBuildInputs = [ ];
 
