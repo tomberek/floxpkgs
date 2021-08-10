@@ -19,5 +19,7 @@ derivation {
   outputHash = "sha256-RFjY3nhJ30TMqxXhaxVIsoUiTbul8I+sBwwcDgvMTPo=";
 
 
-  meta = "asdf";
+  meta = {
+    d = "asdf";
+  };
 }
