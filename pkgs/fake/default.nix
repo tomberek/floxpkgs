@@ -1,4 +1,4 @@
-{ pkgs,...
+{ pkgs, meta, ...
 }:
 
 let file = 
@@ -17,7 +17,5 @@ derivation {
   outputHashMode = "flat";
   outputHashAlgo = "sha256";
   outputHash = "sha256-RFjY3nhJ30TMqxXhaxVIsoUiTbul8I+sBwwcDgvMTPo=";
-  meta = {
-    description = "fake";
-  };
+  inherit meta;
 }
