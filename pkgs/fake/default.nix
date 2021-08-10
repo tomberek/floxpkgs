@@ -20,6 +20,6 @@ derivation {
 
 
   meta = {
-    d = "asdf";
+    outPath = "asdf";
   };
 }
