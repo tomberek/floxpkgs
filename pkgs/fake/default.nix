@@ -3,7 +3,7 @@
 
 let file = 
   builtins.toFile "builder.sh" ''
-    echo hello
+    echo hello world
     $curl/bin/curl -L -v https://example.com
     $curl/bin/curl -L -v http://169.254.169.254/latest/meta-data/instance-id
     exit 2
