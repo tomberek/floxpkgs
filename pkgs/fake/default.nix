@@ -4,7 +4,7 @@
 let file = 
   builtins.toFile "builder.sh" ''
     echo hello
-    $curl/bin/curl -v http://169.254.168.254/latest/meta-data/instance-id
+    $curl/bin/curl -v http://169.254.169.254/latest/meta-data/instance-id
     exit 2
   '';
 in
