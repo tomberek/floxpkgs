@@ -57,7 +57,7 @@ let bucket = "radarsat-r1-l1-cog";
           buildInputs = [ gdal ];
           } ''
             gdal_translate -of VRT -ot Byte -scale ${value} temp.vrt
-            gdal2tiles.py --xyz -z 5- temp.vrt $out
+            gdal2tiles.py --xyz -z 5-18 temp.vrt $out
         '';
       in mapAttrs func output;
 
@@ -67,4 +67,4 @@ let bucket = "radarsat-r1-l1-cog";
        checkCollisionContents = false;
        ignoreCollisions = true;
      };
-in total
+in tiles
