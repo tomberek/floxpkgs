@@ -37,6 +37,7 @@ let bucket = "radarsat-r1-l1-cog";
           buildInputs = [ awscli ];
           __noChroot = true;
           } ''
+          echo ${list_keys}
           aws --no-sign-request s3 cp s3://${bucket}/${key} $out
         '';
       };
@@ -67,4 +68,4 @@ let bucket = "radarsat-r1-l1-cog";
        checkCollisionContents = false;
        ignoreCollisions = true;
      };
-in tiles
+in total
