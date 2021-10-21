@@ -68,4 +68,6 @@ let bucket = "radarsat-r1-l1-cog";
        checkCollisionContents = false;
        ignoreCollisions = true;
      };
-in total
+in lib.recurseIntoAttrs {
+  inherit output info tiles total;
+}
