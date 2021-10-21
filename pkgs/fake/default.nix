@@ -9,8 +9,7 @@ let bucket = "radarsat-r1-l1-cog";
       parts = split "[^a-zA-z0-9_-]" pname;
       non-null = filter (x: x != null && ! isList x && x != "") parts;
     in concatStringsSep "-" (non-null);
-in
-  rec {
+
     list = runCommand "fake" {
       buildInputs = [ awscli ];
       outputHashMode = "flat";
@@ -67,5 +66,4 @@ in
        checkCollisionContents = false;
        ignoreCollisions = true;
      };
-
-  }
+in total
