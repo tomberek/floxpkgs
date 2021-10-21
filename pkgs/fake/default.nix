@@ -30,7 +30,7 @@ let bucket = "radarsat-r1-l1-cog";
 
     # import-from-derivation
     output = let
-      list_newline = lib.strings.splitString "\n" (readFile list_keys);
+      list_newline = filter (x: x != "" ) (lib.strings.splitString "\n" (readFile list_keys));
       func = key: {
         name = safeName key;
         value = runCommand "${safeName key}.tiff" {
