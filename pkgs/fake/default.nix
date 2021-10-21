@@ -41,7 +41,7 @@ let bucket = "radarsat-r1-l1-cog";
           aws --no-sign-request s3 cp s3://${bucket}/${key} $out
         '';
       };
-      in listToAttrs (map func list_newline);
+      in lib.recurseIntoAttrs (listToAttrs (map func list_newline));
 
     info = let
       func = key: value:
@@ -50,7 +50,7 @@ let bucket = "radarsat-r1-l1-cog";
           } ''
             gdalinfo -json ${value} | tee $out
         '';
-      in mapAttrs func output;
+      in lib.recurseIntoAttrs (mapAttrs func output);
 
     tiles = let
       func = key: value:
@@ -60,7 +60,7 @@ let bucket = "radarsat-r1-l1-cog";
             gdal_translate -of VRT -ot Byte -scale ${value} temp.vrt
             gdal2tiles.py --xyz -z 5-13 temp.vrt $out
         '';
-      in mapAttrs func output;
+      in lib.recurseIntoAttrs (mapAttrs func output);
 
      total = buildEnv {
        name = "tiles";
