@@ -23,7 +23,7 @@ let bucket = "radarsat-r1-l1-cog";
       buildInputs = [ awscli jq ];
     } ''
       jq '.Contents[].Key' ${list} -cr > output
-      head -n10 output | tee $out
+      cat output | tee $out
     '';
 
 ##### END OF BOILERPLATE #######
