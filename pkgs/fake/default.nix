@@ -63,7 +63,7 @@ let bucket = "radarsat-r1-l1-cog";
       in lib.recurseIntoAttrs (mapAttrs func output);
 
      total = buildEnv {
-       name = "tiles";
+       name = "total";
        paths = attrValues tiles;
        checkCollisionContents = false;
        ignoreCollisions = true;
