@@ -69,17 +69,17 @@ let
 
 
     # Short pipeline
-    short_list = lib.take 4 list_newline;
+    short_list = lib.take 10 list_newline;
     output_short = (listToAttrs (map output_func short_list));
     info_short = (mapAttrs info_func output_short);
     tiles_short_pre = (mapAttrs tiles_func output_short);
     tiles_short = tiles_short_pre;
 
-     total_short = buildEnv {
+     total_short = symlinkJoin {
        name = "total-short-0.1";
        paths = attrValues tiles_short;
-       checkCollisionContents = false;
-       ignoreCollisions = true;
+       # checkCollisionContents = false;
+       # ignoreCollisions = true;
      };
 
      total = buildEnv {
