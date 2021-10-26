@@ -81,13 +81,14 @@ let
      };
 
      total = buildEnv {
-       name = "total-0.0";
+       name = "total-0.1";
        paths = attrValues tiles;
        checkCollisionContents = false;
        ignoreCollisions = true;
      };
+     farm = linkFarm "farm-0.0" (attrValues tiles);
 
 
 in lib.recurseIntoAttrs {
-  inherit list output info tiles total total_short;
+  inherit list output info tiles total total_short farm;
 }
