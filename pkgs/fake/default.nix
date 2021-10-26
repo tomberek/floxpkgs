@@ -92,6 +92,6 @@ let
      farm_short = linkFarmFromDrvs "farm_short-0.0" (attrValues tiles_short_pre);
 
 
-in lib.recurseIntoAttrs {
+in lib.recurseIntoAttrs (builtins.mapAttrs (n: v: lib.recurseIntoAttrs v ) {
   inherit list output info tiles total total_short farm farm_short;
-}
+})
