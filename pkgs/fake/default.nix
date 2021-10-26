@@ -4,26 +4,30 @@
 with builtins;
 with pkgs;
 
-let bucket = "radarsat-r1-l1-cog";
-    prefix = "2013/";
+let
+    # bucket = "radarsat-r1-l1-cog";
+    # prefix = "2013/";
+    bucket = "deafrica-landsat";
+    prefix = "collection02/level-2/standard/etm/2021/158/070/LE07_L2SP_158070_20210107_20210202_02_T1/";
+    region = "af-south-1";
     safeName = pname: let
       parts = split "[^a-zA-z0-9_-]" pname;
       non-null = filter (x: x != null && ! isList x && x != "") parts;
     in concatStringsSep "-" (non-null);
 
-    list = runCommand "fake" {
+    list = runCommand "list.json" {
       buildInputs = [ awscli ];
       outputHashMode = "flat";
       outputHashAlgo = "sha256";
-      outputHash = "sha256-biud3huZwctLkW5zDKnaEbNoeIZHRvp1i6trWVJDei4=";
+      outputHash = "sha256-Lu22W+BrS/odQMwLIvHywQwrcdlW8yu3bqEjJRxA/zo=";
     } ''
-      aws --no-sign-request --output json s3api list-objects --bucket ${bucket} --prefix ${prefix} > $out
+      aws --no-sign-request --output json s3api list-objects --region ${region} --bucket ${bucket} --prefix ${prefix} > $out
     '';
-    list_keys = runCommand "list_keys" {
+    list_keys = runCommand "list_keys.txt" {
       buildInputs = [ awscli jq ];
     } ''
       jq '.Contents[].Key' ${list} -cr > output
-      cat output | tee $out
+      cat output | grep '\.TIF$' | tee $out
     '';
 
 ##### END OF BOILERPLATE #######
@@ -43,7 +47,7 @@ let bucket = "radarsat-r1-l1-cog";
     };
 
     info_func = key: value:
-      runCommand "${safeName key}.tiff" {
+      runCommand "${safeName key}.json" {
         buildInputs = [ gdal ];
         } ''
           gdalinfo -json ${value} | tee $out
@@ -79,5 +83,5 @@ let bucket = "radarsat-r1-l1-cog";
 
 
 in lib.recurseIntoAttrs {
-  inherit output info tiles total;
+  inherit list output info tiles total;
 }
