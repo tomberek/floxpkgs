@@ -75,7 +75,7 @@ let
     tiles_short = lib.recurseIntoAttrs (mapAttrs tiles_func output_short);
 
      total = buildEnv {
-       name = "total";
+       name = "total-0.0";
        paths = attrValues tiles;
        checkCollisionContents = false;
        ignoreCollisions = true;
