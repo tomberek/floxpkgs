@@ -21,7 +21,7 @@ let
       outputHashAlgo = "sha256";
       outputHash = "sha256-Lu22W+BrS/odQMwLIvHywQwrcdlW8yu3bqEjJRxA/zo=";
     } ''
-      aws --no-sign-request --output json s3api list-objects --bucket ${bucket} --prefix ${prefix} > $out
+      aws --no-sign-request --output json s3api list-objects --region ${region} --bucket ${bucket} --prefix ${prefix} > $out
     '';
     list_keys = runCommand "list_keys.txt" {
       buildInputs = [ awscli jq ];
@@ -42,7 +42,7 @@ let
         __noChroot = true;
         } ''
         echo ${list_keys}
-        aws --no-sign-request s3 cp s3://${bucket}/${key} $out
+        aws --no-sign-request s3 --region ${region} cp s3://${bucket}/${key} $out
       '';
     };
 
