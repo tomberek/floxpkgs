@@ -8,7 +8,7 @@ let
     # bucket = "radarsat-r1-l1-cog";
     # prefix = "2013/";
     bucket = "deafrica-landsat";
-    prefix = "collection02/level-2/standard/etm/2021/158/070/";
+    prefix = "collection02/level-2/standard/etm/2021/158/";
     region = "af-south-1";
     safeName = pname: let
       parts = split "[^a-zA-z0-9_-]" pname;
@@ -27,7 +27,7 @@ let
       buildInputs = [ awscli jq ];
     } ''
       jq '.Contents[].Key' ${list} -cr > output
-      cat output | grep '\.TIF$' | tee $out
+      cat output | grep '\.PIXEL-TIF$' | tee $out
     '';
 
 ##### END OF BOILERPLATE #######
@@ -69,10 +69,16 @@ let
 
 
     # Short pipeline
-    short_list = lib.list.take 10 list_newline;
+    short_list = lib.take 2 list_newline;
     output_short = lib.recurseIntoAttrs (listToAttrs (map output_func short_list));
     info_short = lib.recurseIntoAttrs (mapAttrs info_func output_short);
     tiles_short = lib.recurseIntoAttrs (mapAttrs tiles_func output_short);
+     total_short = buildEnv {
+       name = "total-short-0.0";
+       paths = attrValues tiles_short;
+       checkCollisionContents = false;
+       ignoreCollisions = true;
+     };
 
      total = buildEnv {
        name = "total-0.0";
@@ -83,5 +89,5 @@ let
 
 
 in lib.recurseIntoAttrs {
-  inherit list output info tiles total;
+  inherit list output info tiles total total_short;
 }
