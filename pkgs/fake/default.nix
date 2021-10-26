@@ -27,7 +27,7 @@ let
       buildInputs = [ awscli jq ];
     } ''
       jq '.Contents[].Key' ${list} -cr > output
-      cat output | grep '\.PIXEL-TIF$' | tee $out
+      cat output | grep 'PIXEL\.TIF$' | tee $out
     '';
 
 ##### END OF BOILERPLATE #######
