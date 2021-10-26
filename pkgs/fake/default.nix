@@ -29,38 +29,45 @@ let bucket = "radarsat-r1-l1-cog";
 ##### END OF BOILERPLATE #######
 
     # import-from-derivation
-    output = let
-      list_newline = filter (x: x != "" ) (lib.strings.splitString "\n" (readFile list_keys));
-      func = key: {
-        name = safeName key;
-        value = runCommand "${safeName key}.tiff" {
-          buildInputs = [ awscli ];
-          __noChroot = true;
-          } ''
-          echo ${list_keys}
-          aws --no-sign-request s3 cp s3://${bucket}/${key} $out
-        '';
-      };
-      in lib.recurseIntoAttrs (listToAttrs (map func list_newline));
+    list_newline = filter (x: x != "" ) (lib.strings.splitString "\n" (readFile list_keys));
 
-    info = let
-      func = key: value:
-        runCommand "${safeName key}.tiff" {
-          buildInputs = [ gdal ];
-          } ''
-            gdalinfo -json ${value} | tee $out
-        '';
-      in lib.recurseIntoAttrs (mapAttrs func output);
+    output_func = key: {
+      name = safeName key;
+      value = runCommand "${safeName key}.tiff" {
+        buildInputs = [ awscli ];
+        __noChroot = true;
+        } ''
+        echo ${list_keys}
+        aws --no-sign-request s3 cp s3://${bucket}/${key} $out
+      '';
+    };
 
-    tiles = let
-      func = key: value:
+    info_func = key: value:
+      runCommand "${safeName key}.tiff" {
+        buildInputs = [ gdal ];
+        } ''
+          gdalinfo -json ${value} | tee $out
+      '';
+
+    tile_func = key: value:
         runCommand "${safeName key}" {
           buildInputs = [ gdal ];
           } ''
             gdal_translate -of VRT -ot Byte -scale ${value} temp.vrt
             gdal2tiles.py --xyz -z 5-13 temp.vrt $out
         '';
-      in lib.recurseIntoAttrs (mapAttrs func output);
+
+
+    # Full pipeline
+    output = lib.recurseIntoAttrs (listToAttrs (map func list_newline));
+    info = lib.recurseIntoAttrs (mapAttrs func output);
+    tiles = lib.recurseIntoAttrs (mapAttrs func output);
+
+
+    # Short pipeline
+    short_list = lib.list.take 10 list_newline;
+    output_short = lib.recurseIntoAttrs (listToAttrs (map func short_list));
+    tiles_short = lib.recurseIntoAttrs (mapAttrs func short_list);
 
      total = buildEnv {
        name = "total";
@@ -68,6 +75,8 @@ let bucket = "radarsat-r1-l1-cog";
        checkCollisionContents = false;
        ignoreCollisions = true;
      };
+
+
 in lib.recurseIntoAttrs {
   inherit output info tiles total;
 }
