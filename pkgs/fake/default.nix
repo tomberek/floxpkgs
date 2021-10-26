@@ -1,5 +1,5 @@
-{ pkgs, ...
-#{ pkgs ? import <nixpkgs>{}, ...
+#{ pkgs, ...
+{ pkgs ? import <nixpkgs>{}, ...
 }:
 with builtins;
 with pkgs;
@@ -8,7 +8,7 @@ let
     # bucket = "radarsat-r1-l1-cog";
     # prefix = "2013/";
     bucket = "deafrica-landsat";
-    prefix = "collection02/level-2/standard/etm/2021/158/070/LE07_L2SP_158070_20210107_20210202_02_T1/";
+    prefix = "collection02/level-2/standard/etm/2021/158/070/";
     region = "af-south-1";
     safeName = pname: let
       parts = split "[^a-zA-z0-9_-]" pname;
@@ -19,7 +19,7 @@ let
       buildInputs = [ awscli ];
       outputHashMode = "flat";
       outputHashAlgo = "sha256";
-      outputHash = "sha256-Lu22W+BrS/odQMwLIvHywQwrcdlW8yu3bqEjJRxA/zo=";
+      outputHash = "sha256-zGDAlOYi+ws2Pld90C6wpZribwYwBEnoT2nzyYw4GUE=";
     } ''
       aws --no-sign-request --output json s3api list-objects --region ${region} --bucket ${bucket} --prefix ${prefix} > $out
     '';
