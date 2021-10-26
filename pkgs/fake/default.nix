@@ -69,7 +69,7 @@ let
 
 
     # Short pipeline
-    short_list = lib.take 2 list_newline;
+    short_list = lib.take 4 list_newline;
     output_short = lib.recurseIntoAttrs (listToAttrs (map output_func short_list));
     info_short = lib.recurseIntoAttrs (mapAttrs info_func output_short);
     tiles_short = lib.recurseIntoAttrs (mapAttrs tiles_func output_short);
@@ -80,11 +80,11 @@ let
        ignoreCollisions = true;
      };
 
-     total = symlinkJoin {
+     total = buildEnv {
        name = "total-0.0";
        paths = attrValues tiles;
-       # checkCollisionContents = false;
-       # ignoreCollisions = true;
+       checkCollisionContents = false;
+       ignoreCollisions = true;
      };
 
 
