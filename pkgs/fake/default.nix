@@ -19,7 +19,7 @@ let
       buildInputs = [ awscli ];
       outputHashMode = "flat";
       outputHashAlgo = "sha256";
-      outputHash = "sha256-zGDAlOYi+ws2Pld90C6wpZribwYwBEnoT2nzyYw4GUE=";
+      outputHash = "sha256-qE2eDLzTbNX5nSRZtNFg9pthfMSvZe+nUODu2zMxlr4=";
     } ''
       aws --no-sign-request --output json s3api list-objects --region ${region} --bucket ${bucket} --prefix ${prefix} > $out
     '';
@@ -27,7 +27,7 @@ let
       buildInputs = [ awscli jq ];
     } ''
       jq '.Contents[].Key' ${list} -cr > output
-      cat output | grep 'PIXEL\.TIF$' | tee $out
+      cat output | grep 'PIXEL\.TIF$' | awk -F'/' '{if(!($6$7 in a)) print $0;a[$6$7]=1}' | tee $out
     '';
 
 ##### END OF BOILERPLATE #######
@@ -57,8 +57,8 @@ let
         runCommand "${safeName key}" {
           buildInputs = [ gdal ];
           } ''
-            gdal_translate -of VRT -ot Byte -scale ${value} temp.vrt
-            gdal2tiles.py --xyz -z 5-13 temp.vrt $out
+            gdal_translate -of VRT -ot Byte -scale ${value} ${key}.vrt
+            gdal2tiles.py --xyz -z 5-13 ${key}.vrt $out
         '';
 
 
@@ -80,11 +80,11 @@ let
        ignoreCollisions = true;
      };
 
-     total = buildEnv {
+     total = symlinkJoin {
        name = "total-0.0";
        paths = attrValues tiles;
-       checkCollisionContents = false;
-       ignoreCollisions = true;
+       # checkCollisionContents = false;
+       # ignoreCollisions = true;
      };
 
 
