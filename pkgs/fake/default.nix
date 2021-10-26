@@ -63,9 +63,9 @@ let
 
 
     # Full pipeline
-    output = lib.recurseIntoAttrs (listToAttrs (map output_func list_newline));
-    info = lib.recurseIntoAttrs (mapAttrs info_func output);
-    tiles = lib.recurseIntoAttrs (mapAttrs tiles_func output);
+    output = (listToAttrs (map output_func list_newline));
+    info = (mapAttrs info_func output);
+    tiles = (mapAttrs tiles_func output);
 
 
     # Short pipeline
@@ -76,7 +76,7 @@ let
     tiles_short = tiles_short_pre;
 
      total_short = buildEnv {
-       name = "total-short-0.0";
+       name = "total-short-0.1";
        paths = attrValues tiles_short;
        checkCollisionContents = false;
        ignoreCollisions = true;
@@ -89,7 +89,7 @@ let
        ignoreCollisions = true;
      };
      farm = linkFarmFromDrvs "farm-0.0" (attrValues tiles);
-     farm_short = linkFarmFromDrvs "farm-0.0" (attrValues tiles_short_pre);
+     farm_short = linkFarmFromDrvs "farm_short-0.0" (attrValues tiles_short_pre);
 
 
 in lib.recurseIntoAttrs {
