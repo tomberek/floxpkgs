@@ -49,7 +49,7 @@ let bucket = "radarsat-r1-l1-cog";
           gdalinfo -json ${value} | tee $out
       '';
 
-    tile_func = key: value:
+    tiles_func = key: value:
         runCommand "${safeName key}" {
           buildInputs = [ gdal ];
           } ''
@@ -59,15 +59,16 @@ let bucket = "radarsat-r1-l1-cog";
 
 
     # Full pipeline
-    output = lib.recurseIntoAttrs (listToAttrs (map func list_newline));
-    info = lib.recurseIntoAttrs (mapAttrs func output);
-    tiles = lib.recurseIntoAttrs (mapAttrs func output);
+    output = lib.recurseIntoAttrs (listToAttrs (map output_func list_newline));
+    info = lib.recurseIntoAttrs (mapAttrs info_func output);
+    tiles = lib.recurseIntoAttrs (mapAttrs tiles_func output);
 
 
     # Short pipeline
     short_list = lib.list.take 10 list_newline;
-    output_short = lib.recurseIntoAttrs (listToAttrs (map func short_list));
-    tiles_short = lib.recurseIntoAttrs (mapAttrs func short_list);
+    output_short = lib.recurseIntoAttrs (listToAttrs (map output_func short_list));
+    info_short = lib.recurseIntoAttrs (mapAttrs info_func output_short);
+    tiles_short = lib.recurseIntoAttrs (mapAttrs tiles_func output_short);
 
      total = buildEnv {
        name = "total";
