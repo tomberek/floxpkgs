@@ -101,7 +101,7 @@ let
           find $(cat path.list | sed -e 's#$#/'"$1#" ) 2>/dev/null > $out/$1
         }
         export -f run
-        parallel --lb --will-cite -N1 run {} :::: file.list
+        ${parallel}/bin/parallel --lb --will-cite -N1 run {} :::: file.list
       '';
 
      func_combine = total_short: name: runCommand "${name}-0.1" {
