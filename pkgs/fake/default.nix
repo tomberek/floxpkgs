@@ -75,23 +75,58 @@ let
     tiles_short_pre = (mapAttrs tiles_func output_short);
     tiles_short = tiles_short_pre;
 
+      symlinkJoin =
+    args_@{ name
+         , paths
+         , preferLocalBuild ? true
+         , allowSubstitutes ? false
+         , postBuild ? ""
+         , ...
+         }:
+    let
+      args = removeAttrs args_ [ "name" "postBuild" ]
+        // {
+          inherit preferLocalBuild allowSubstitutes;
+          passAsFile = [ "paths" ];
+        }; # pass the defaults
+    in runCommand name args
+      ''
+        mkdir -p $out
+        find $(cat $pathsPath) -iname "*.png" | cut -d/ -f 5- | sort | uniq > file.list
+        cat $pathsPath | tr $'\n' ' ' > path0.list
+        cat $pathsPath | tr ' ' $'\n' > path.list
+        while IFS= read -r line; do
+          mkdir -p $(dirname $out/$line)
+          find $(cat path.list | sed -e 's#$#/'"$line#" ) 2>/dev/null > $out/$line
+        done < file.list || true
+      '';
+
+     func_combine = total_short: runCommand "output" {
+        buildInputs = [ gdal imagemagick parallel ];
+        } ''
+          run(){
+            output=$(echo $1 | cut -d/ -f5-)
+            mkdir -p $(dirname $out/$output)
+            convert $(cat $1) -background None -layers Flatten $out/$output
+          }
+          export -f run
+          find ${total_short} -iname "*.png" | \
+           parallel --ungroup -v --will-cite -N1 run {}
+          cat ${builtins.elemAt (builtins.attrValues tiles_short) 0}/openlayers.html | grep -v extent > $out/openlayers.html
+          '';
+
      total_short = symlinkJoin {
        name = "total-short-0.1";
        paths = attrValues tiles_short;
-       # checkCollisionContents = false;
-       # ignoreCollisions = true;
      };
-
-     total = buildEnv {
+     total = symlinkJoin {
        name = "total-0.1";
        paths = attrValues tiles;
-       checkCollisionContents = false;
-       ignoreCollisions = true;
      };
-     farm = linkFarmFromDrvs "farm-0.0" (attrValues tiles);
-     farm_short = linkFarmFromDrvs "farm_short-0.0" (attrValues tiles_short_pre);
+     total_final = func_combine total;
+     total_final_short = func_combine total_short;
 
 
 in lib.recurseIntoAttrs (builtins.mapAttrs (n: v: lib.recurseIntoAttrs v ) {
-  inherit list output info tiles total total_short farm farm_short;
+  inherit list output info tiles total total_short total_final;
 })
