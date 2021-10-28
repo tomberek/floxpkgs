@@ -19,7 +19,7 @@ let
       buildInputs = [ awscli ];
       outputHashMode = "flat";
       outputHashAlgo = "sha256";
-      outputHash = "sha256-qE2eDLzTbNX5nSRZtNFg9pthfMSvZe+nUODu2zMxlr4=";
+      outputHash = "sha256-vRxUF88VMF9CdIGOwOdmoUgJn6zPlHae4dvoP6T73bs=";
     } ''
       aws --no-sign-request --output json s3api list-objects --region ${region} --bucket ${bucket} --prefix ${prefix} > $out
     '';
