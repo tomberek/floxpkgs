@@ -128,5 +128,5 @@ let
 
 
 in lib.recurseIntoAttrs (builtins.mapAttrs (n: v: lib.recurseIntoAttrs v ) {
-  inherit list output info tiles total total_short total_final;
+  inherit list output info tiles total total_short total_final total_final_short;
 })
