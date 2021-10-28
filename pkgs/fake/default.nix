@@ -8,7 +8,7 @@ let
     # bucket = "radarsat-r1-l1-cog";
     # prefix = "2013/";
     bucket = "deafrica-landsat";
-    prefix = "collection02/level-2/standard/etm/2021/158/";
+    prefix = "collection02/level-2/standard/etm/2021/";
     region = "af-south-1";
     safeName = pname: let
       parts = split "[^a-zA-z0-9_-]" pname;
