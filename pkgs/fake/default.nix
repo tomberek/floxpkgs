@@ -107,6 +107,7 @@ let
           run(){
             output=$(echo $1 | cut -d/ -f5-)
             mkdir -p $(dirname $out/$output)
+            echo Building $out/$output
             convert $(cat $1) -background None -layers Flatten $out/$output
           }
           export -f run
