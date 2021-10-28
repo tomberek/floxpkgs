@@ -58,7 +58,7 @@ let
           buildInputs = [ gdal ];
           } ''
             gdal_translate -of VRT -ot Byte -scale ${value} ${key}.vrt
-            gdal2tiles.py --xyz -z 5-13 ${key}.vrt $out
+            gdal2tiles.py --xyz -z 5-11 ${key}.vrt $out
         '';
 
 
@@ -95,10 +95,13 @@ let
         find $(cat $pathsPath) -iname "*.png" | cut -d/ -f 5- | sort | uniq > file.list
         cat $pathsPath | tr $'\n' ' ' > path0.list
         cat $pathsPath | tr ' ' $'\n' > path.list
-        while IFS= read -r line; do
-          mkdir -p $(dirname $out/$line)
-          find $(cat path.list | sed -e 's#$#/'"$line#" ) 2>/dev/null > $out/$line
-        done < file.list || true
+        run(){
+          mkdir -p $(dirname $out/$1)
+          echo Building $1
+          find $(cat path.list | sed -e 's#$#/'"$1#" ) 2>/dev/null > $out/$1
+        }
+        export -f run
+        parallel --lb --will-cite -N1 run {} :::: file.list
       '';
 
      func_combine = total_short: name: runCommand "${name}-0.1" {
