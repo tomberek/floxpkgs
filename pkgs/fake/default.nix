@@ -101,7 +101,7 @@ let
         done < file.list || true
       '';
 
-     func_combine = total_short: runCommand "output" {
+     func_combine = total_short: name: runCommand "${name}-0.1" {
         buildInputs = [ gdal imagemagick parallel ];
         } ''
           run(){
@@ -123,8 +123,8 @@ let
        name = "total-0.1";
        paths = attrValues tiles;
      };
-     total_final = func_combine total;
-     total_final_short = func_combine total_short;
+     total_final = func_combine total "total-final";
+     total_final_short = func_combine total_short "total-final-short";
 
 
 in lib.recurseIntoAttrs (builtins.mapAttrs (n: v: lib.recurseIntoAttrs v ) {
