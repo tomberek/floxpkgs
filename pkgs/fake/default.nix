@@ -58,7 +58,7 @@ let
           buildInputs = [ gdal ];
           } ''
             gdal_translate -of VRT -ot Byte -scale ${value} ${key}.vrt
-            gdal2tiles.py --xyz -z 5-11 ${key}.vrt $out
+            gdal2tiles.py -a 0 --xyz -z 5-11 ${key}.vrt $out
         '';
 
 
