@@ -75,7 +75,7 @@ let
     tiles_short_pre = (mapAttrs tiles_func output_short);
     tiles_short = tiles_short_pre;
 
-      symlinkJoin =
+    symlinkJoin =
     args_@{ name
          , paths
          , preferLocalBuild ? true
@@ -98,10 +98,11 @@ let
         run(){
           mkdir -p $(dirname $out/$1)
           echo Building $1
-          find $(cat path.list | sed -e 's#$#/'"$1#" ) 2>/dev/null > $out/$1
+          find $(cat path.list | sed -e 's#$#/'"$1#" ) 2>/dev/null > $out/$1 || true
         }
         export -f run
         ${parallel}/bin/parallel --lb --will-cite -N1 run {} :::: file.list
+        echo done
       '';
 
      func_combine = total_short: name: runCommand "${name}-0.1" {
